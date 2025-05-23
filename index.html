@@ -1,162 +1,518 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Miguel Quiroz | Cartão Interativo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@400;700&display=swap" rel="stylesheet" />
-  <script src="https://kit.fontawesome.com/a2d04f58d2.js" crossorigin="anonymous"></script>
-  <style>
-    :root {
-      --fundo-cartao: #0b0e1c;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miguel Quiroz - CodeStorm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--fundo-cartao);
-      color: white;
-      text-align: center;
-      padding: 0;
-      overflow-x: hidden;
-    }
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1a1a1a, #121212, #0a0a0a);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+            overflow: hidden;
+        }
 
-    #preloader {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 9999;
-      animation: fadeOut 2s ease 4s forwards;
-    }
+        .loading-screen::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            animation: rotate 8s linear infinite;
+        }
 
-    #preloader h1,
-    #preloader p {
-      font-family: 'Orbitron', sans-serif;
-      color: #00f0ff;
-      opacity: 0;
-      animation: fadeInUp 1s ease forwards;
-      text-align: center;
-    }
+        .loading-screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 60%, #121212 100%);
+        }
 
-    #preloader h1 {
-      animation-delay: 0.5s;
-      font-size: 2.5rem;
-    }
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
 
-    #preloader p:nth-of-type(1) {
-      animation-delay: 1.5s;
-    }
+        .loading-content {
+            text-align: center;
+            color: #ffffff;
+            position: relative;
+            z-index: 10;
+        }
 
-    #preloader p:nth-of-type(2) {
-      animation-delay: 2.5s;
-    }
+        .loading-line {
+            font-size: 1.8rem;
+            margin: 1.2rem 0;
+            opacity: 0;
+            transform: translateY(30px) scale(0.8);
+            animation: fadeInUpScale 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+        .loading-line:nth-child(1) {
+            animation-delay: 0.4s;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #00d4ff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            animation: fadeInUpScale 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards, pulse 2s ease-in-out 1.6s infinite;
+        }
 
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        visibility: hidden;
-      }
-    }
+        .loading-line:nth-child(2) {
+            animation-delay: 0.9s;
+            color: #ffffff;
+        }
 
-    .main {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 20px 80px;
-      opacity: 0;
-      animation: fadeInUp 1s ease 5s forwards;
-    }
+        .loading-line:nth-child(3) {
+            animation-delay: 1.4s;
+            color: #ffffff;
+        }
 
-    .logo {
-      width: 100vw;
-      max-width: 100%;
-      display: block;
-      margin: 0 auto 40px;
-    }
+        @keyframes fadeInUpScale {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
 
-    .link-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      background: #141e35;
-      border: 1px solid #2e405f;
-      padding: 20px;
-      margin: 16px auto;
-      width: 90%;
-      max-width: 600px;
-      color: white;
-      font-size: 1.4rem;
-      font-weight: 600;
-      border-radius: 12px;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
-    .link-button i {
-      font-size: 1.7em;
-    }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
 
-    .link-button:hover {
-      background: #1c2a48;
-      transform: scale(1.03);
-    }
+        /* Main Card Container */
+        .card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
 
-    @media (max-width: 600px) {
-      .link-button {
-        font-size: 1.1rem;
-        padding: 16px;
-      }
+        .card-container.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
 
-      .link-button i {
-        font-size: 1.4rem;
-      }
-    }
-  </style>
+        .business-card {
+            background: #121212;
+            border-radius: 0;
+            padding: 2rem 1rem;
+            width: 100%;
+            max-width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Logo Section */
+        .logo-container {
+            margin-bottom: 3rem;
+            position: relative;
+            width: 100%;
+        }
+
+        .logo {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        /* Social Links Container */
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            padding: 0;
+            align-items: center;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            color: #ffffff;
+            text-decoration: none;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            width: calc(100% - 2rem);
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 10px 20px rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .social-link:hover::before {
+            left: 100%;
+        }
+
+        .social-link:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        .social-icon {
+            font-size: 2rem;
+            margin-right: 1.5rem;
+            width: 45px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            flex: 1;
+            text-align: left;
+        }
+
+        /* Specific icon colors */
+        .github-link:hover .social-icon { color: #ffffff; }
+        .portfolio-link:hover .social-icon { color: #00d4ff; }
+        .discord-link:hover .social-icon { color: #5865f2; }
+        .instagram-link:hover .social-icon { color: #e1306c; }
+        .facebook-link:hover .social-icon { color: #1877f2; }
+        .whatsapp-link:hover .social-icon { color: #25d366; }
+        .email-link:hover .social-icon { color: #ea4335; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card-container {
+                padding: 1rem;
+            }
+
+            .business-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .social-link {
+                padding: 1.2rem 1.5rem;
+                width: 90%;
+                max-width: 400px;
+            }
+
+            .social-icon {
+                font-size: 1.8rem;
+                margin-right: 1.2rem;
+                width: 40px;
+            }
+
+            .social-text {
+                font-size: 1.2rem;
+            }
+
+            .loading-line {
+                font-size: 1.4rem;
+            }
+
+            .loading-line:nth-child(1) {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-container {
+                padding: 0.5rem;
+            }
+
+            .business-card {
+                padding: 1rem 0.5rem;
+            }
+
+            .social-links {
+                gap: 1rem;
+            }
+
+            .social-link {
+                padding: 1rem 1.2rem;
+                width: 85%;
+                max-width: 350px;
+            }
+
+            .social-icon {
+                font-size: 1.6rem;
+                margin-right: 1rem;
+                width: 35px;
+            }
+
+            .social-text {
+                font-size: 1.1rem;
+            }
+
+            .loading-line {
+                font-size: 1.2rem;
+            }
+
+            .loading-line:nth-child(1) {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .social-link {
+                width: 90%;
+                max-width: 320px;
+                padding: 0.8rem 1rem;
+            }
+
+            .social-icon {
+                font-size: 1.4rem;
+                margin-right: 0.8rem;
+                width: 30px;
+            }
+
+            .social-text {
+                font-size: 1rem;
+            }
+        }
+
+        /* Pulse animation for loading */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Floating animation */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-line">Miguel Quiroz</div>
+            <div class="loading-line">www.portifolio.codestrm.com.br</div>
+            <div class="loading-line">contato@codestrm.com.br</div>
+        </div>
+    </div>
 
-<!-- Tela de carregamento -->
-<div id="preloader">
-  <h1>Miguel Quiroz</h1>
-  <p>www.portifolio.codestrm.com.br</p>
-  <p>contato@codestrm.com.br</p>
-</div>
+    <!-- Main Card -->
+    <div class="card-container" id="cardContainer">
+        <div class="business-card">
+            <div class="logo-container">
+                <img src="https://raw.githubusercontent.com/MigueI-Codestorm/Cartao-CodeStorm/refs/heads/main/assets/codestorm.gif" 
+                     alt="CodeStorm Logo" 
+                     class="logo floating">
+            </div>
 
-<!-- Conteúdo principal -->
-<div class="main" id="main-content">
-  <img src="https://raw.githubusercontent.com/MigueI-Codestorm/Cartao-CodeStorm/refs/heads/main/assets/codestorm.gif" alt="Logo CodeStorm" class="logo" />
+            <div class="social-links">
+                <a href="https://github.com/MigueI-Codestorm" 
+                   class="social-link github-link" 
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    <i class="fab fa-github social-icon"></i>
+                    <span class="social-text">GitHub</span>
+                </a>
 
-  <a class="link-button" href="https://github.com/MigueI-Codestorm" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-  <a class="link-button" href="https://portifolio.codestrm.com.br" target="_blank"><i class="fas fa-briefcase"></i> Portfólio</a>
-  <a class="link-button" href="https://discord.com/users/1367561960916258878" target="_blank"><i class="fab fa-discord"></i> Discord</a>
-  <a class="link-button" href="https://www.instagram.com/ofc.raell?igsh=enljMTd4a3NkODNo" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
-  <a class="link-button" href="https://www.facebook.com/share/1KdXPir66S/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-  <a class="link-button" href="https://wa.me/5511932212697" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-  <a class="link-button" href="mailto:contato@codestrm.com.br" target="_blank"><i class="fas fa-envelope"></i> E-mail</a>
-</div>
+                <a href="https://portifolio.codestrm.com.br" 
+                   class="social-link portfolio-link" 
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    <i class="fas fa-globe social-icon"></i>
+                    <span class="social-text">Portfólio</span>
+                </a>
 
+                <a href="https://discord.com/users/1367561960916258878" 
+                   class="social-link discord-link" 
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    <i class="fab fa-discord social-icon"></i>
+                    <span class="social-text">Discord</span>
+                </a>
+
+                <a href="https://www.instagram.com/ofc.raell?igsh=enljMTd4a3NkODNo" 
+                   class="social-link instagram-link" 
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    <i class="fab fa-instagram social-icon"></i>
+                    <span class="social-text">Instagram</span>
+                </a>
+
+                <a href="https://www.facebook.com/share/1KdXPir66S/" 
+                   class="social-link facebook-link" 
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    <i class="fab fa-facebook social-icon"></i>
+                    <span class="social-text">Facebook</span>
+                </a>
+
+                <a href="https://wa.me/5511932212697" 
+                   class="social-link whatsapp-link" 
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    <i class="fab fa-whatsapp social-icon"></i>
+                    <span class="social-text">WhatsApp</span>
+                </a>
+
+                <a href="mailto:contato@codestrm.com.br" 
+                   class="social-link email-link">
+                    <i class="fas fa-envelope social-icon"></i>
+                    <span class="social-text">E-mail</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Loading screen functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const cardContainer = document.getElementById('cardContainer');
+            
+            // Hide loading screen after 3 seconds
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                
+                // Show card container after loading screen starts fading
+                setTimeout(() => {
+                    cardContainer.classList.add('visible');
+                }, 200);
+            }, 3000);
+
+            // Add click event listeners for enhanced feedback
+            const socialLinks = document.querySelectorAll('.social-link');
+            socialLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Add a subtle animation on click
+                    this.style.transform = 'translateY(-1px) scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+
+                // Add mouse enter/leave events for additional effects
+                link.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                });
+
+                link.addEventListener('mouseleave', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
+
+            // Logo interaction
+            const logo = document.querySelector('.logo');
+            logo.addEventListener('click', function() {
+                this.style.transform = 'scale(1.1) rotate(5deg)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 300);
+            });
+
+            // Smooth scroll effect for better UX
+            document.body.style.scrollBehavior = 'smooth';
+        });
+
+        // Prevent right-click context menu for a more app-like experience
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const socialLinks = document.querySelectorAll('.social-link');
+            const currentFocus = document.activeElement;
+            const currentIndex = Array.from(socialLinks).indexOf(currentFocus);
+            
+            if (e.key === 'ArrowDown' && currentIndex < socialLinks.length - 1) {
+                e.preventDefault();
+                socialLinks[currentIndex + 1].focus();
+            } else if (e.key === 'ArrowUp' && currentIndex > 0) {
+                e.preventDefault();
+                socialLinks[currentIndex - 1].focus();
+            } else if (e.key === 'Enter' && currentFocus.classList.contains('social-link')) {
+                currentFocus.click();
+            }
+        });
+    </script>
 </body>
 </html>
