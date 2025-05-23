@@ -1,88 +1,130 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Miguel CodeStorm | Cartão Interativo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <title>Miguel CodeStorm - Cartão Interativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@400;700&display=swap">
   <script src="https://kit.fontawesome.com/a2d04f58d2.js" crossorigin="anonymous"></script>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      margin: 0;
-      background: linear-gradient(135deg, #0a0f2c, #000000);
       font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle, #050b25, #000);
       color: white;
+      overflow-x: hidden;
+    }
+
+    /* Tela de carregamento */
+    #preloader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: #000;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: 40px 20px;
-    }
-    .logo {
-      width: 120px;
-      height: auto;
-      margin-bottom: 20px;
-    }
-    .intro {
-      text-align: center;
-      margin-bottom: 40px;
-      animation: fadeIn 1.5s ease;
-    }
-    .intro h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2em;
-      margin: 0;
-    }
-    .intro p {
-      margin: 4px 0;
-      color: #ccc;
-    }
-    .links {
-      display: flex;
       flex-direction: column;
-      gap: 12px;
-      width: 100%;
-      max-width: 400px;
+      z-index: 9999;
+      animation: fadeOut 2s ease 4s forwards;
     }
-    .links a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+
+    #preloader h1, #preloader p {
+      font-family: 'Orbitron', sans-serif;
+      opacity: 0;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    #preloader h1 { animation-delay: 0.5s; font-size: 2em; }
+    #preloader p:first-of-type { animation-delay: 1.5s; }
+    #preloader p:last-of-type { animation-delay: 2.5s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 100px auto 40px;
+      padding: 0 20px;
+      text-align: center;
+      animation: fadeInUp 1s ease 4.5s forwards;
+      opacity: 0;
+    }
+
+    .logo {
+      width: 180px;
+      height: auto;
+      margin-bottom: 40px;
+    }
+
+    .grid-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
+    .btn {
       background: #11182f;
       border: 1px solid #2d3c60;
-      padding: 12px 20px;
       border-radius: 8px;
       color: white;
+      padding: 14px;
       text-decoration: none;
-      transition: background 0.3s;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
     }
-    .links a:hover {
-      background: #1c274a;
+
+    .btn:hover {
+      background: #1f2a4a;
+      transform: scale(1.05);
     }
-    .links i {
-      margin-right: 12px;
+
+    .btn i {
       font-size: 1.2em;
     }
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(-20px); }
-      100% { opacity: 1; transform: translateY(0); }
+
+    @media(max-width: 480px) {
+      .logo { width: 120px; }
     }
   </style>
 </head>
 <body>
-  <img class="logo" src="https://raw.githubusercontent.com/MigueI-Codestorm/MigueI-Codestorm/main/assets/ezgif-6c7421c0e005a8.gif" alt="Logo CodeStorm">
-  <div class="intro">
-    <h1>Miguel Quiroz</h1>
-    <p>www.portifolio.codestrm.com.br</p>
-    <p>contato@codestrm.com.br</p>
-  </div>  <div class="links">
-    <a href="https://github.com/MigueI-Codestorm" target="_blank"><i class="fab fa-github"></i>GitHub</a>
-    <a href="https://portifolio.codestrm.com.br" target="_blank"><i class="fas fa-laptop-code"></i>Portfólio</a>
-    <a href="https://discord.com/users/1367561960916258878" target="_blank"><i class="fab fa-discord"></i>Discord</a>
-    <a href="https://www.instagram.com/ofc.raell?igsh=enljMTd4a3NkODNo" target="_blank"><i class="fab fa-instagram"></i>Instagram</a>
-    <a href="https://www.facebook.com/share/1KdXPir66S/" target="_blank"><i class="fab fa-facebook"></i>Facebook</a>
-    <a href="https://wa.me/5511932212697" target="_blank"><i class="fab fa-whatsapp"></i>WhatsApp</a>
-    <a href="mailto:contato@codestrm.com.br" target="_blank"><i class="fas fa-envelope"></i>E-mail</a>
+
+<!-- Pré-carregamento com animação -->
+<div id="preloader">
+  <h1>Miguel Quiroz</h1>
+  <p>www.portifolio.codestrm.com.br</p>
+  <p>contato@codestrm.com.br</p>
+</div>
+
+<!-- Conteúdo principal -->
+<div class="container" id="main-content">
+  <img src="https://raw.githubusercontent.com/MigueI-Codestorm/Cartao-CodeStorm/refs/heads/main/assets/codestorm.gif" alt="Logo CodeStorm" class="logo" />
+  
+  <div class="grid-links">
+    <a class="btn" href="https://github.com/MigueI-Codestorm" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+    <a class="btn" href="https://portifolio.codestrm.com.br" target="_blank"><i class="fas fa-briefcase"></i> Portfólio</a>
+    <a class="btn" href="https://discord.com/users/1367561960916258878" target="_blank"><i class="fab fa-discord"></i> Discord</a>
+    <a class="btn" href="https://www.instagram.com/ofc.raell?igsh=enljMTd4a3NkODNo" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+    <a class="btn" href="https://www.facebook.com/share/1KdXPir66S/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+    <a class="btn" href="https://wa.me/5511932212697" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    <a class="btn" href="mailto:contato@codestrm.com.br" target="_blank"><i class="fas fa-envelope"></i> E-mail</a>
   </div>
+</div>
+
 </body>
 </html>
